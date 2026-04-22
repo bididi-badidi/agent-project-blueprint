@@ -1,7 +1,8 @@
 ---
-version: 1.0.0
+version: 1.0.1
 last_updated: 2026-04-22
 changelog:
+  - 1.0.1: Compress section 0.1-0.3 to one file hygiene section
   - 1.0.0: Initial release
 ---
 
@@ -23,36 +24,23 @@ You MUST refer to the `PLAN.md` and `progress.md` file in the `.ai/assets/` dire
 
 ---
 
-## 0.1 Strict Rules for Managing `progress.md`
+## 0.1 File Hygiene Rules
 
-To prevent `progress.md` from becoming cluttered, you MUST follow these hygiene protocols during every session:
+| File                                 | Purpose                                             | Update Trigger                                                          |
+| ------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------- |
+| `.ai/assets/progress.md`             | High-level phase status and major milestones only   | After every significant milestone                                       |
+| `.ai/assets/session_notes.md`        | Context handover between sessions (not a changelog) | Read at session start; rewrite before ending if critical context exists |
+| `.ai/assets/task_archive.md`         | Completed tasks, moved out of `progress.md`         | Immediately when a task is marked `[x]`                                 |
+| `.ai/assets/backlog.md`              | Future tasks not active this session                | When user mentions out-of-scope work                                    |
+| `.ai/assets/branches/<branch-name>/` | Granular sub-tasks for the current branch           | During active branch work; summarise into `progress.md` before merge    |
 
-1. **The Active Limit:** Keep a maximum of 5 active items under the "Current Task" section.
-2. **Aggressive Archiving:** The moment a task is marked as complete (`[x]`), you must move it out of `progress.md` and append it to `.ai/assets/task_archive.md`. Do not leave completed tasks cluttering the main view.
-3. **Backlog Delegation:** If the user mentions a new feature or task that is not being worked on in the current session, write it to `.ai/assets/backlog.md`. Do not put it in `progress.md`.
-4. **Phase Abstraction:** Once all goals for a specific Phase are met, remove any sub-bullets under that Phase in `progress.md`. Leave only the Phase title, the `[x]` status, and the link to the detailed Phase document.
+**Hygiene rules:**
 
----
-
-## 0.2 The Handover Protocol (Session Notes)
-
-When you complete a task or need to pause, you must prepare `.ai/assets/session_notes.md` for the Reviewer Agent or the next Coder Agent.
-
-1. **No Changelogs:** Do not write "I fixed X" or "I added Y". That information belongs in the git commits or `task_archive.md`.
-2. **Context Only:** You must explain _why_ you did something if it looks unconventional, flag areas of the code that might have race conditions (a flaw where the timing of events affects a program's correct execution), or list the exact next steps if a task is blocked.
-3. **Reset:** Always delete the previous agent's notes before starting your own work to keep the context window (the maximum amount of text the AI can process at one time) clean.
-
----
-
-## 0.3 Branch-Specific Progress (Conflict Avoidance)
-
-To prevent merge conflicts in the main `progress.md`, you MUST use branch-local progress files for granular or high-churn task tracking.
-
-1. **Location:** Store these files in `.ai/assets/branches/<branch-name>/`.
-2. **Usage:**
-   - **Main `progress.md`:** Use ONLY for high-level Phase status and major milestones.
-   - **Branch Progress:** Use for granular sub-tasks, technical logs, and active research.
-3. **Transition:** When a branch is ready for merge, summarize the outcome in the main `progress.md` and move completed granular tasks to `.ai/assets/task_archive.md`.
+- Keep a maximum of 5 active items under "Current Task" in `progress.md`. If a 6th arrives, ask the user which item to defer before accepting it.
+- Move completed tasks (`[x]`) to `task_archive.md` immediately — never leave them in `progress.md`.
+- Once all goals for a Phase are met, strip sub-bullets from `progress.md`. Leave only the Phase title, `[x]` status, and a link to the Phase document.
+- Session notes are context only — explain _why_ something looks unconventional, flag race conditions, or list next steps if blocked. No "I fixed X" changelogs.
+- At session start: read `session_notes.md` fully, extract what you need, _then_ delete the previous agent's notes before writing your own.
 
 ---
 
