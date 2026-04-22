@@ -1,5 +1,6 @@
 ---
 name: github-workflows
+version: 1.0.0
 description: "Use this skill whenever the task involves creating, editing, or debugging GitHub Actions workflow YAML files. Triggers: any mention of '.github/workflows', 'github actions', 'CI pipeline', 'workflow yml', 'actions/checkout', 'actions/setup-python', 'matrix strategy', 'secrets in CI', 'on: push', 'on: pull_request', or 'reusable workflows'. Also use when the user wants to automate linting, testing, or deployment on GitHub. Do NOT use for writing commit messages, branching strategy, or pull request descriptions — those have separate skills."
 ---
 

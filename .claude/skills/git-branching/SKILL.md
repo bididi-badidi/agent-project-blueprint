@@ -1,5 +1,6 @@
 ---
 name: git-branching
+version: 1.0.0
 description: "Use this skill whenever the task involves creating branches, switching branches, pushing commits to the correct branch, resolving merge conflicts, or deciding on a branching strategy. Triggers: any mention of 'create branch', 'git checkout', 'git switch', 'git push', 'feature branch', 'hotfix', 'develop branch', 'github flow', 'gitflow', 'trunk-based', 'merge conflict', or 'which branch should I push to'. Do NOT use for writing commit messages (see git-workflow skill) or creating GitHub Actions workflows (see github-workflows skill)."
 ---
 

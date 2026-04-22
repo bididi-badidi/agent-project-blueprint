@@ -1,6 +1,6 @@
 ---
 name: skill-writer
-
+version: 1.0.0
 description: "Use this skill whenever the user wants to write a new skill from scratch, refine or improve an existing skill, fix a skill that is not triggering correctly, rewrite a skill description, or review a skill for quality. Triggers: any mention of 'write a skill', 'create a skill', 'refine a skill', 'improve a skill', 'fix my skill', 'skill description', 'SKILL.md', or 'the skill is not triggering'. Also use when the user pastes a skill and says something like 'can you improve this' or 'something feels off about this skill'. Do NOT use for general prompt engineering, system prompt writing, or writing GitHub Actions workflows."
 ---
 

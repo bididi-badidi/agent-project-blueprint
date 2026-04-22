@@ -1,5 +1,6 @@
 ---
 name: task-decompose
+version: 1.0.0
 description: >
   Use this skill whenever a task is large, complex, multi-step, or vague enough that
   tackling it in one pass would likely produce inconsistent or incomplete results.

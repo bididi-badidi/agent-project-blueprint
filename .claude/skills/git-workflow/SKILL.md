@@ -1,5 +1,6 @@
 ---
 name: git-workflow
+version: 1.0.0
 description: "Use this skill whenever the task involves writing, generating, linting, or reviewing git commit messages. Triggers: any mention of 'commit message', 'git commit', 'conventional commits', 'commitlint', 'changelog', 'semantic versioning from commits', or 'how to commit'. Also use when the user asks the assistant to stage and commit changes as part of a larger workflow. Do NOT use for GitHub Actions workflows, pull requests, branch management, or git push — those have separate skills."
 ---
 

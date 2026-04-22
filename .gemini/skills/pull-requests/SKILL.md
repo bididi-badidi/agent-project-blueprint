@@ -1,6 +1,6 @@
 ---
 name: pull-requests
-
+version: 1.0.0
 description: "Use this skill whenever the task involves opening, writing, reviewing, or merging GitHub Pull Requests (PRs). Triggers: any mention of 'pull request', 'PR description', 'PR template', 'gh pr create', 'code review', 'request changes', 'merge strategy', 'squash merge', 'draft PR', 'PR checklist', or 'CODEOWNERS'. Also use when the user asks how to link a PR to an issue, choose a merge strategy, or set up PR automation. Do NOT use for commit message writing, branching, or workflow YAML — those have separate skills."
 ---
 
