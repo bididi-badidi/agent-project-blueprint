@@ -49,9 +49,9 @@ When you complete a task or need to pause, you must prepare `.ai/assets/session_
 To prevent merge conflicts in the main `progress.md`, you MUST use branch-local progress files for granular or high-churn task tracking.
 
 1. **Location:** Store these files in `.ai/assets/branches/<branch-name>/`.
-2. **Usage:** 
-    - **Main `progress.md`:** Use ONLY for high-level Phase status and major milestones.
-    - **Branch Progress:** Use for granular sub-tasks, technical logs, and active research.
+2. **Usage:**
+   - **Main `progress.md`:** Use ONLY for high-level Phase status and major milestones.
+   - **Branch Progress:** Use for granular sub-tasks, technical logs, and active research.
 3. **Transition:** When a branch is ready for merge, summarize the outcome in the main `progress.md` and move completed granular tasks to `.ai/assets/task_archive.md`.
 
 ---
