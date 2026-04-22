@@ -10,6 +10,7 @@ Version in each file's frontmatter reflects the last release in which that file 
 ## v1.0.0 — 2026-04-22
 
 ### Added
+
 - `CLAUDE.md` — initial agent instructions for Claude
 - `GEMINI.md` — initial agent instructions for Gemini
 - `.claude/skills/coding-workflow/SKILL.md`
@@ -26,3 +27,10 @@ Version in each file's frontmatter reflects the last release in which that file 
 - `.gemini/skills/pull-requests/SKILL.md`
 - `.gemini/skills/task-decompose/SKILL.md`
 - `.gemini/skills/write-skills/SKILL.md`
+
+## v1.0.1 — 2026-04-22
+
+### Changed
+
+- `CLAUDE.md` — compress section 0.1-0.3 to one file hygiene section
+- `GEMINI.md` — compress section 0.1-0.3 to one file hygiene section
