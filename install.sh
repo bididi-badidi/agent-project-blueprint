@@ -10,7 +10,7 @@
 set -e
 
 # Configuration
-REPO_URL="https://github.com/bididi-badidi/agent-project-blueprint.git"
+REPO_URL="https://github.com/bididi-badidi/agent-project-blueprint"
 SOURCE_URL="${REPO_URL}/tarball/main"
 TEMP_DIR=$(mktemp -d)
 TARGET_DIR=$(pwd)

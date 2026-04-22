@@ -14,10 +14,10 @@ A template for project-aware coding agents (Gemini CLI, Claude Code, etc.). This
 If you have an existing project and want to add this blueprint structure, run the following command in your project root:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/<GITHUB-URL>/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/bididi-badidi/agent-project-blueprint/main/install.sh)"
 ```
 
-*Note: Replace `<GITHUB-URL>` with the path to your repository.*
+_Note: Replace `<GITHUB-URL>` with the path to your repository._
 
 ## 📂 Directory Structure
 
