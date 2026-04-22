@@ -11,13 +11,17 @@ A template for project-aware coding agents (Gemini CLI, Claude Code, etc.). This
 
 ## 🚀 Quick Start for Existing Projects
 
-If you have an existing project and want to add this blueprint structure, run the following command in your project root:
+If you have an existing project and want to add this blueprint structure, run the command for your operating system in your project root:
 
+### macOS / Linux
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/bididi-badidi/agent-project-blueprint/main/install.sh)"
 ```
 
-_Note: Replace `<GITHUB-URL>` with the path to your repository._
+### Windows (PowerShell)
+```powershell
+powershell -c "irm https://raw.githubusercontent.com/bididi-badidi/agent-project-blueprint/main/install.ps1 | iex"
+```
 
 ## 📂 Directory Structure
 
