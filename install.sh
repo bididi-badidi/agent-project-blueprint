@@ -11,7 +11,7 @@ set -e
 
 # Configuration
 REPO_URL="https://github.com/bididi-badidi/agent-project-blueprint"
-SOURCE_URL="${REPO_URL}/tarball/main"
+SOURCE_URL="${REPO_URL}/archive/refs/heads/main.tar.gz"
 TEMP_DIR=$(mktemp -d)
 TARGET_DIR=$(pwd)
 
@@ -33,13 +33,22 @@ fi
 
 # 2. Download and Extract
 echo "📦 Downloading template from ${REPO_URL}..."
-if ! curl -L "$SOURCE_URL" -o "$TEMP_DIR/template.tar.gz" --silent; then
-    echo "❌ Error: Failed to download the template. Check the repository URL: ${REPO_URL}"
+# Use -f to fail on HTTP errors and -L to follow redirects
+if ! curl -fL "$SOURCE_URL" -o "$TEMP_DIR/template.tar.gz" --silent; then
+    echo "❌ Error: Failed to download the template."
+    echo "   Please verify that the repository exists and the 'main' branch is public."
+    echo "   URL: $SOURCE_URL"
     exit 1
 fi
 
 echo "📂 Extracting files..."
 mkdir -p "$TEMP_DIR/extracted"
+# Check if the file is actually a gzip file before extracting
+if ! file "$TEMP_DIR/template.tar.gz" | grep -q "gzip compressed data"; then
+    echo "❌ Error: Downloaded file is not a valid archive. This usually happens if the URL is incorrect or requires authentication."
+    exit 1
+fi
+
 tar -xz -f "$TEMP_DIR/template.tar.gz" -C "$TEMP_DIR/extracted" --strip-components=1
 
 # 3. Copy Blueprint Files
