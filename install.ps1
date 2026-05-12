@@ -1,20 +1,42 @@
 # ==============================================================================
 # Blueprint Installation Script (Windows PowerShell)
 # ==============================================================================
-# This script populates an existing project with the Gemini/Claude Agent
-# Blueprint structure (.ai, .gemini, .claude, GEMINI.md, CLAUDE.md).
+# This script populates an existing project with the Codex/Gemini/Claude Agent
+# Blueprint structure (.ai, .agents, .codex, .gemini, .claude, AGENTS.md,
+# GEMINI.md, CLAUDE.md).
 #
 # Usage:
-#   .\install.ps1                        # installs latest release
-#   .\install.ps1 -Version v1.2.0        # installs a specific tagged version
-#   .\install.ps1 -Version latest        # explicitly installs latest release
+#   .\install.ps1                              # installs all services (latest)
+#   .\install.ps1 -Version v1.2.0            # installs a specific tagged version
+#   .\install.ps1 -Version latest            # explicitly installs latest release
+#   .\install.ps1 -Services claude           # installs Claude only
+#   .\install.ps1 -Services codex,gemini     # installs Codex + Gemini
+#   .\install.ps1 -Services codex,claude     # installs Codex + Claude
 # ==============================================================================
 
 param(
-    [string]$Version = "latest"
+    [string]$Version  = "latest",
+    [string]$Services = ""
 )
 
 $ErrorActionPreference = "Stop"
+
+# ------------------------------------------------------------------------------
+# Resolve selected services
+# ------------------------------------------------------------------------------
+$ValidServices = @("codex", "gemini", "claude")
+
+if ([string]::IsNullOrWhiteSpace($Services)) {
+    $SelectedServices = $ValidServices
+} else {
+    $SelectedServices = $Services -split "," | ForEach-Object { $_.Trim().ToLower() }
+    foreach ($svc in $SelectedServices) {
+        if ($svc -notin $ValidServices) {
+            Write-Host "❌ Unknown service: '$svc'. Valid options: codex, gemini, claude" -ForegroundColor Red
+            exit 1
+        }
+    }
+}
 
 # Configuration
 $RepoOwner = "bididi-badidi"
@@ -107,10 +129,22 @@ try {
     $RootFolder = Get-ChildItem -Path $ExtractDir | Select-Object -First 1
 
     # ----------------------------------------------------------------------------
+    # Build list of items to copy based on selected services
+    # .ai is always included (shared infrastructure)
+    # ----------------------------------------------------------------------------
+    $ItemsToCopy = @(".ai")
+    foreach ($svc in $SelectedServices) {
+        switch ($svc) {
+            "codex"  { $ItemsToCopy += @(".agents", ".codex", "AGENTS.md") }
+            "gemini" { $ItemsToCopy += @(".gemini", "GEMINI.md") }
+            "claude" { $ItemsToCopy += @(".claude", "CLAUDE.md") }
+        }
+    }
+
+    # ----------------------------------------------------------------------------
     # Copy blueprint files
     # ----------------------------------------------------------------------------
-    Write-Host "🏗️  Populating project structure..."
-    $ItemsToCopy    = @(".ai", ".gemini", ".claude", "GEMINI.md", "CLAUDE.md")
+    Write-Host "🏗️  Populating project structure (services: $($SelectedServices -join ', '))..."
     $UpstreamWritten = @()
 
     foreach ($Item in $ItemsToCopy) {
@@ -187,9 +221,24 @@ try {
     }
 
     Write-Host "Next steps:"
-    Write-Host "1. Review 'GEMINI.md' and 'CLAUDE.md' for agent instructions."
-    Write-Host "2. Check '.ai/assets/progress.md' to start tracking your project."
-    Write-Host "3. Add '.ai/assets/branches/' and '.ai/assets/memory.jsonl' to your .gitignore."
+    Write-Host "1. Check '.ai/assets/progress.md' to start tracking your project."
+
+    $Step = 2
+    foreach ($svc in $SelectedServices) {
+        switch ($svc) {
+            "codex"  { Write-Host "${Step}. Review 'AGENTS.md' for Codex agent instructions." }
+            "gemini" { Write-Host "${Step}. Review 'GEMINI.md' for Gemini agent instructions." }
+            "claude" { Write-Host "${Step}. Review 'CLAUDE.md' for Claude agent instructions." }
+        }
+        $Step++
+    }
+
+    if ("codex" -in $SelectedServices) {
+        Write-Host "${Step}. Trust the project in Codex to enable project-scoped '.codex/config.toml'."
+        $Step++
+    }
+
+    Write-Host "${Step}. Add '.ai/assets/branches/' and '.ai/assets/memory.jsonl' to your .gitignore."
     Write-Host "----------------------------------------------------------------"
     Write-Host "Happy coding! 🚀"
 }

@@ -6,11 +6,14 @@ PHASES_DIR="$ASSETS_DIR/phases"
 BRANCHES_DIR="$ASSETS_DIR/branches"
 EXAMPLES_DIR="$ASSETS_DIR/examples"
 SCRIPTS_DIR=".ai/scripts"
+AGENTS_DIR=".agents"
+CODEX_DIR=".codex"
 
 echo "🚀 Initializing .ai directory structure..."
 
 # 1. Create Directories
 mkdir -p "$PHASES_DIR" "$BRANCHES_DIR" "$EXAMPLES_DIR" "$SCRIPTS_DIR"
+mkdir -p "$AGENTS_DIR/skills/coding-workflow" "$CODEX_DIR"
 
 # 2. Create Boilerplate Files (only if they don't exist)
 
@@ -111,6 +114,54 @@ You MUST refer to the \`PLAN.md\` and \`progress.md\` file in the \`.ai/assets/\
 1. **No Changelogs:** Use git for history.
 2. **Context Only:** Explain *why* you did something or flag fragile code.
 3. **Reset:** Always delete the previous agent's notes before starting.
+EOF
+fi
+
+# AGENTS.md (Rules for Codex and agents that support AGENTS.md)
+if [ ! -f "AGENTS.md" ]; then
+cat <<EOF > "AGENTS.md"
+# Local Coder Agent
+
+You are a project-aware coding agent. You read the real codebase, reason across multiple files, and take concrete action.
+
+## Project Progress Tracking
+
+You MUST refer to \`.ai/assets/PLAN.md\`, \`.ai/assets/progress.md\`, and \`.ai/assets/session_notes.md\` at the start of every session.
+
+- Update \`.ai/assets/progress.md\` after every significant milestone.
+- Use \`.ai/assets/session_notes.md\` as a persistent scratchpad.
+- Keep Codex skills in \`.agents/skills/\`.
+- Keep Codex MCP configuration in \`.codex/config.toml\`.
+EOF
+fi
+
+# Codex MCP configuration
+if [ ! -f "$CODEX_DIR/config.toml" ]; then
+cat <<EOF > "$CODEX_DIR/config.toml"
+# Project-scoped Codex configuration.
+# Codex loads this file after the user trusts the project.
+
+[mcp_servers.memory]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-memory"]
+
+[mcp_servers.memory.env]
+MEMORY_FILE_PATH = ".ai/assets/memory.jsonl"
+EOF
+fi
+
+# Standard Codex skill: Coding Workflow
+CODEX_SKILL_PATH="$AGENTS_DIR/skills/coding-workflow/SKILL.md"
+if [ ! -f "$CODEX_SKILL_PATH" ]; then
+cat <<EOF > "$CODEX_SKILL_PATH"
+---
+name: coding-workflow
+description: Enforces linting, testing, and git hygiene after every code change.
+---
+# Post-Coding Workflow
+1. **Linting**: Run project-specific linting (e.g., \`ruff check .\`).
+2. **Testing**: Run test suite (e.g., \`pytest\`).
+3. **Git Hygiene**: Check for untracked files and update .gitignore.
 EOF
 fi
 

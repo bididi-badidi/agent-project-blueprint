@@ -3,13 +3,17 @@
 # ==============================================================================
 # Blueprint Installation Script
 # ==============================================================================
-# This script populates an existing project with the Gemini/Claude Agent
-# Blueprint structure (.ai, .gemini, .claude, GEMINI.md, CLAUDE.md).
+# This script populates an existing project with the Codex/Gemini/Claude Agent
+# Blueprint structure (.ai, .agents, .codex, .gemini, .claude, AGENTS.md,
+# GEMINI.md, CLAUDE.md).
 #
 # Usage:
-#   ./install.sh                     # installs latest release
-#   ./install.sh --version v1.2.0    # installs a specific tagged version
-#   ./install.sh --version latest    # explicitly installs latest release
+#   ./install.sh                              # installs all services (latest)
+#   ./install.sh --version v1.2.0            # installs a specific tagged version
+#   ./install.sh --version latest            # explicitly installs latest release
+#   ./install.sh --service claude            # installs Claude only
+#   ./install.sh --service codex,gemini      # installs Codex + Gemini
+#   ./install.sh --service codex --service claude  # same, using repeated flags
 # ==============================================================================
 
 set -e
@@ -22,6 +26,7 @@ TEMP_DIR=$(mktemp -d)
 TARGET_DIR=$(pwd)
 STAMP_FILE=".ai/assets/.blueprint-version"
 REQUEST_VERSION=""
+SERVICES=()
 
 # ------------------------------------------------------------------------------
 # Argument parsing
@@ -36,13 +41,33 @@ while [[ $# -gt 0 ]]; do
             REQUEST_VERSION="${1#*=}"
             shift
             ;;
+        --service)
+            IFS=',' read -ra _SVCLIST <<< "$2"
+            for _svc in "${_SVCLIST[@]}"; do
+                SERVICES+=("$_svc")
+            done
+            shift 2
+            ;;
+        --service=*)
+            IFS=',' read -ra _SVCLIST <<< "${1#*=}"
+            for _svc in "${_SVCLIST[@]}"; do
+                SERVICES+=("$_svc")
+            done
+            shift
+            ;;
         -h|--help)
-            echo "Usage: $0 [--version <tag|latest>]"
+            echo "Usage: $0 [--version <tag|latest>] [--service <name>[,<name>...]]"
             echo ""
             echo "Options:"
-            echo "  --version <tag>   Install a specific release tag (e.g. v1.2.0)"
-            echo "  --version latest  Install the latest release (default)"
-            echo "  -h, --help        Show this help message"
+            echo "  --version <tag>      Install a specific release tag (e.g. v1.2.0)"
+            echo "  --version latest     Install the latest release (default)"
+            echo "  --service <name>     Install only the specified service(s)."
+            echo "                       Valid values: codex, gemini, claude"
+            echo "                       Repeat the flag or use comma-separation for multiple:"
+            echo "                         --service codex --service claude"
+            echo "                         --service codex,claude"
+            echo "                       Omit to install all three (default)."
+            echo "  -h, --help           Show this help message"
             exit 0
             ;;
         *)
@@ -52,6 +77,21 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Validate and default services
+if [ "${#SERVICES[@]}" -eq 0 ]; then
+    SERVICES=("codex" "gemini" "claude")
+else
+    for _svc in "${SERVICES[@]}"; do
+        case "$_svc" in
+            codex|gemini|claude) ;;
+            *)
+                echo "❌ Unknown service: '$_svc'. Valid options: codex, gemini, claude"
+                exit 1
+                ;;
+        esac
+    done
+fi
 
 # Cleanup on exit
 trap "rm -rf '$TEMP_DIR'" EXIT
@@ -152,10 +192,22 @@ fi
 tar -xz -f "$TEMP_DIR/template.tar.gz" -C "$TEMP_DIR/extracted" --strip-components=1
 
 # ------------------------------------------------------------------------------
+# Build list of items to copy based on selected services
+# .ai is always included (shared infrastructure)
+# ------------------------------------------------------------------------------
+ITEMS_TO_COPY=(".ai")
+for _svc in "${SERVICES[@]}"; do
+    case "$_svc" in
+        codex)  ITEMS_TO_COPY+=(".agents" ".codex" "AGENTS.md") ;;
+        gemini) ITEMS_TO_COPY+=(".gemini" "GEMINI.md") ;;
+        claude) ITEMS_TO_COPY+=(".claude" "CLAUDE.md") ;;
+    esac
+done
+
+# ------------------------------------------------------------------------------
 # Copy blueprint files
 # ------------------------------------------------------------------------------
-echo "🏗️  Populating project structure..."
-ITEMS_TO_COPY=(".ai" ".gemini" ".claude" "GEMINI.md" "CLAUDE.md")
+echo "🏗️  Populating project structure (services: ${SERVICES[*]})..."
 UPSTREAM_WRITTEN=()
 
 for item in "${ITEMS_TO_COPY[@]}"; do
@@ -224,8 +276,25 @@ if [ "${#UPSTREAM_WRITTEN[@]}" -gt 0 ]; then
 fi
 
 echo "Next steps:"
-echo "1. Review 'GEMINI.md' and 'CLAUDE.md' for agent instructions."
-echo "2. Check '.ai/assets/progress.md' to start tracking your project."
-echo "3. Add '.ai/assets/branches/' and '.ai/assets/memory.jsonl' to your .gitignore."
+echo "1. Check '.ai/assets/progress.md' to start tracking your project."
+
+_step=2
+for _svc in "${SERVICES[@]}"; do
+    case "$_svc" in
+        codex)  echo "${_step}. Review 'AGENTS.md' for Codex agent instructions." ;;
+        gemini) echo "${_step}. Review 'GEMINI.md' for Gemini agent instructions." ;;
+        claude) echo "${_step}. Review 'CLAUDE.md' for Claude agent instructions." ;;
+    esac
+    (( _step++ )) || true
+done
+
+_has_codex=false
+for _svc in "${SERVICES[@]}"; do [[ "$_svc" == "codex" ]] && _has_codex=true; done
+if [ "$_has_codex" = true ]; then
+    echo "${_step}. Trust the project in Codex to enable project-scoped '.codex/config.toml'."
+    (( _step++ )) || true
+fi
+
+echo "${_step}. Add '.ai/assets/branches/' and '.ai/assets/memory.jsonl' to your .gitignore."
 echo "----------------------------------------------------------------"
 echo "Happy coding! 🚀"

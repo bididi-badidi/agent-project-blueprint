@@ -33,13 +33,13 @@ All versions follow `MAJOR.MINOR.PATCH`:
 
 ### Step 1 — Make your changes
 
-Edit the relevant file(s): `GEMINI.md`, `CLAUDE.md`, or any `SKILL.md`.
+Edit the relevant file(s): `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, or any `SKILL.md`.
 
 ---
 
 ### Step 2 — Bump the version in each changed file's frontmatter
 
-For `GEMINI.md` and `CLAUDE.md`, update `version:`, `last_updated:`, and append to `changelog:`:
+For `AGENTS.md`, `GEMINI.md`, and `CLAUDE.md`, update `version:`, `last_updated:`, and append to `changelog:`:
 
 ```yaml
 ---
